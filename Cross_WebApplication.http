@@ -1,0 +1,6 @@
+@Cross_WebApplication_HostAddress = http://localhost:5164
+
+GET {{Cross_WebApplication_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
