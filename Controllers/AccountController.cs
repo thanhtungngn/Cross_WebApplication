@@ -1,4 +1,5 @@
-﻿using Cross_WebApplication.Entities;
+﻿using Cross_WebApplication.Context;
+using Cross_WebApplication.Entities;
 using Cross_WebApplication.Entity;
 using Cross_WebApplication.Models;
 using Cross_WebApplication.Services;
@@ -13,11 +14,13 @@ namespace Cross_WebApplication.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
-        public AccountController(UserManager<ApplicationUser> userManager, IJwtService jwtService)
+        public AccountController(UserManager<ApplicationUser> userManager, IJwtService jwtService, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _jwtService = jwtService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("login")]
@@ -42,7 +45,7 @@ namespace Cross_WebApplication.Controllers
         }
 
         [HttpPost("signup")] 
-        public async Task<IActionResult> SignUp([FromBody] User user)
+        public async Task<IActionResult> SignUp([FromBody] IdentityUsers user)
         {
             try
             {
@@ -50,16 +53,28 @@ namespace Cross_WebApplication.Controllers
                 {
                     ApplicationUser appUser = new ApplicationUser
                     {
-                        UserName = user.Name,
+                        UserName = user.UserName,
                         Email = user.Email
                     };
 
                     IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
                     if (result.Succeeded)
+                    {
+                        // Create user to User table
+                        var userDto = new User
+                        {
+                            Name = user.Name,
+                            Email = user.Email,
+                            Phone = user.Phone,
+                            Surname = user.Surname,
+                            UserName = user.UserName
+                        };
+                        await _unitOfWork.Users.AddAsync(userDto);
                         return Ok("User successfully created");
+                    }
                     else
                     {                     
-                        return BadRequest(String.Join(", ", result.Errors));
+                        return BadRequest(String.Join(", ", result.Errors.Select(x=>x.Description)));
                     }
                 }
                 return BadRequest(String.Join(", ", ModelState.Values.SelectMany(x => x.Errors)));

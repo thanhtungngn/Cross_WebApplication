@@ -10,6 +10,9 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Cross_WebApplication.Repository.Abstract;
+using Cross_WebApplication.Repository.Concrete;
+using Cross_WebApplication.Context;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,7 +72,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.Configure<JwtBearerOptions>(builder.Configuration.GetSection("Jwt"));
 
+// Dependency Injection
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddSingleton<MongoDbContext>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<ITcpListenerService>(new TcpListenerService(int.Parse(builder.Configuration["TcpConfig:Port"] ?? "0")));
 
 // Add services to the container.
 
@@ -121,6 +131,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Start TCP Listener
+var tcpListener = app.Services.GetRequiredService<ITcpListenerService>();
+tcpListener.Start();
 
 app.UseHttpsRedirection();
 

@@ -3,7 +3,7 @@ using MongoDbGenericRepository.Attributes;
 
 namespace Cross_WebApplication.Entity
 {
-    [CollectionName("Users")]
+    [CollectionName("IdentityUsers")]
     public class ApplicationUser : MongoIdentityUser<Guid>
     {
     }
