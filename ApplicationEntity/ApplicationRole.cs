@@ -3,8 +3,10 @@ using MongoDbGenericRepository.Attributes;
 
 namespace Cross_WebApplication.Entity
 {
-    [CollectionName("Roles")]
+    [CollectionName("IdentityRoles")]
     public class ApplicationRole : MongoIdentityRole<Guid>
     {
+        public ApplicationRole() :base() { }
+        public ApplicationRole(string roleName) : base(roleName) { }
     }
 }

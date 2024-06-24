@@ -21,7 +21,7 @@ namespace Cross_WebApplication.Repository.Concrete
 
         public async Task<T> GetByIdAsync(string id)
         {
-            return await _collection.Find(Builders<T>.Filter.Eq("_id", id)).FirstOrDefaultAsync();
+            return await _collection.Find(Builders<T>.Filter.Eq("_id", new Guid(id))).FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(T entity)
@@ -29,9 +29,9 @@ namespace Cross_WebApplication.Repository.Concrete
             await _collection.InsertOneAsync(entity);
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, UpdateDefinition<T> updateDefinition)
         {
-            await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), entity);
+            await _collection.UpdateOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), updateDefinition);
         }
 
         public async Task DeleteAsync(string id)

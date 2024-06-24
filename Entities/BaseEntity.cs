@@ -1,4 +1,7 @@
-﻿namespace Cross_WebApplication.Entities
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace Cross_WebApplication.Entities
 {
     public class BaseEntity
     {

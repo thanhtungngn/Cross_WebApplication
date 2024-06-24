@@ -31,7 +31,7 @@ namespace Cross_WebApplication.Controllers
                 var user = await _userManager.FindByEmailAsync(model.UserName);
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = _jwtService.GenerateToken(user);
+                    var token = await _jwtService.GenerateToken(user);
                     return Ok(new { Token = token });
                 }
 

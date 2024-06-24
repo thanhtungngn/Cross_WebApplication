@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Cross_WebApplication.Repository.Abstract;
 using Cross_WebApplication.Repository.Concrete;
 using Cross_WebApplication.Context;
+using Cross_WebApplication.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +72,21 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.Configure<JwtBearerOptions>(builder.Configuration.GetSection("Jwt"));
+
+// Authorization
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AppConstant.Role.Admin, policy =>
+        policy.RequireRole(AppConstant.Role.Admin));
+
+    options.AddPolicy(AppConstant.Role.Contributor, policy =>
+        policy.RequireRole(AppConstant.Role.Admin, AppConstant.Role.Contributor));
+
+    options.AddPolicy(AppConstant.Role.Reader, policy =>
+        policy.RequireRole(AppConstant.Role.Admin, AppConstant.Role.Contributor, AppConstant.Role.Reader));
+});
+
 
 // Dependency Injection
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -138,6 +154,7 @@ tcpListener.Start();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
