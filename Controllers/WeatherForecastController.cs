@@ -21,7 +21,7 @@ namespace Cross_WebApplication.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize(Roles = AppConstant.Role.Reader)]
+        [Authorize(Policy = AppConstant.Role.Contributor)]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

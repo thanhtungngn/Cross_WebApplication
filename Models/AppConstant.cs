@@ -13,5 +13,7 @@
         {
             Role.Reader, Role.Contributor, Role.Admin
         };
+
+        public static string DefaultPassword = "Today@2024";
     }
 }

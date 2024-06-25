@@ -1,4 +1,4 @@
-﻿namespace Cross_WebApplication.Models
+﻿namespace Cross_WebApplication.Models.DTO
 {
     public class LoginDto
     {
