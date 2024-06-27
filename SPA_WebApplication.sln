@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossApplication.API", "CrossApplication.API.csproj", "{93E2B982-BD4B-43CB-BD6F-7F9BE32944DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPClient", "..\TCPClient\TCPClient.csproj", "{8FC245DA-D550-4972-8F06-92ADD969A27A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossApplication.TCPClient", "..\TCPClient\CrossApplication.TCPClient.csproj", "{8FC245DA-D550-4972-8F06-92ADD969A27A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
