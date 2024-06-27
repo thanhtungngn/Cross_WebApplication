@@ -107,7 +107,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<ITcpListenerService>(new TcpListenerService(int.Parse(builder.Configuration["TcpConfig:Port"] ?? "0")));
+builder.Services.AddSingleton<TcpListenerService>();
 
 // CORS Config
 builder.Services.AddCors(options => {
@@ -169,7 +169,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Start TCP Listener
-var tcpListener = app.Services.GetRequiredService<ITcpListenerService>();
+var tcpListener = app.Services.GetRequiredService<TcpListenerService>();
 tcpListener.Start();
 
 app.UseHttpsRedirection();

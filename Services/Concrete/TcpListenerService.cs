@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cross_WebApplication.Context;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,10 +15,15 @@ namespace Cross_WebApplication.Services
         private readonly int _port;
         private TcpListener _listener;
         private bool _isRunning;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IConfiguration _configuration;
 
-        public TcpListenerService(int port)
+
+        public TcpListenerService(IConfiguration configuration, IServiceProvider serviceProvider)
         {
-            _port = port;
+            _configuration = configuration;
+            _serviceProvider = serviceProvider;
+            _ = int.TryParse(_configuration["TcpConfig:Port"], out _port);
         }
 
         public void Start()
@@ -60,7 +66,19 @@ namespace Cross_WebApplication.Services
                     Console.WriteLine($"Received data: {data}");
 
                     // Here you can process the received data, e.g., save to MongoDB
-                    // HandleEvent(data);
+                    var dataSplit = data.Split("--");
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var _unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>();
+                        await _unitOfWork.Events.AddAsync(new Entities.Event
+                        {
+                            Title = dataSplit[1],
+                            Description = $"Event sent at {dataSplit[0]}",
+                            CreatedAt = DateTime.Now,
+                            IsProcessed = false
+                        });
+                    }
+                    
 
                     // Respond back if needed
                     // byte[] response = Encoding.UTF8.GetBytes("Message received");
