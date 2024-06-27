@@ -18,6 +18,18 @@ using Cross_WebApplication.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Kestrel
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenLocalhost(12001, listenOptions =>
+    {
+        listenOptions.UseHttps(httpsOptions =>
+        {
+            httpsOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        });
+    });
+});
+
 // Configure MongoDB 
 var mongoDbSettings = builder.Configuration.GetSection(nameof(MongoDbConfig)).Get<MongoDbConfig>();
 builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
@@ -97,9 +109,17 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<ITcpListenerService>(new TcpListenerService(int.Parse(builder.Configuration["TcpConfig:Port"] ?? "0")));
 
-// Add services to the container.
+// CORS Config
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll",
+    builder => builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader());
+});
 
+// Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -153,6 +173,10 @@ var tcpListener = app.Services.GetRequiredService<ITcpListenerService>();
 tcpListener.Start();
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("AllowAll"); // Use the CORS policy
 
 app.UseAuthentication();
 app.UseAuthorization();

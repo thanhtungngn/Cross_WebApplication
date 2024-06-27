@@ -36,7 +36,7 @@ namespace Cross_WebApplication.Repository.Concrete
 
         public async Task DeleteAsync(string id)
         {
-            await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", id));
+            await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", new Guid(id)));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Cross_WebApplication.Controllers
         {
             try
             {
-                var user = await _userManager.FindByEmailAsync(model.UserName);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var token = await _jwtService.GenerateToken(user);
@@ -58,8 +58,8 @@ namespace Cross_WebApplication.Controllers
 
                     ApplicationUser appUser = new ApplicationUser
                     {
-                        UserName = user.UserName,
-                        Email = user.Email
+                        Email = user.Email,
+                        UserName = user.Email
                     };
 
                     IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
@@ -84,11 +84,10 @@ namespace Cross_WebApplication.Controllers
                             Email = user.Email,
                             Phone = user.Phone,
                             Surname = user.Surname,
-                            UserName = user.UserName,
                             Role = AppConstant.Role.Reader
                         };
                         await _unitOfWork.Users.AddAsync(userDto);
-                        return Ok("User successfully created");
+                        return Ok(new { message = "User successfully created" });
                     }
                     else
                     {
@@ -118,8 +117,8 @@ namespace Cross_WebApplication.Controllers
 
                     ApplicationUser appUser = new ApplicationUser
                     {
-                        UserName = user.UserName,
-                        Email = user.Email
+                        Email = user.Email,
+                        UserName = user.Email
                     };
 
                     IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
@@ -145,11 +144,10 @@ namespace Cross_WebApplication.Controllers
                             Email = user.Email,
                             Phone = user.Phone,
                             Surname = user.Surname,
-                            UserName = user.UserName,
                             Role = AppConstant.Role.Admin
                         };
                         await _unitOfWork.Users.AddAsync(userDto);
-                        return Ok("User successfully created");
+                        return Ok(new { message = "User successfully created" });
                     }
                     else
                     {

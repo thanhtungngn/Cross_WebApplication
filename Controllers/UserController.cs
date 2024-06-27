@@ -76,7 +76,7 @@ namespace Cross_WebApplication.Controllers
                             .Set(u => u.Role, userDto.Role)
                             .Set(u => u.Phone, userDto.Phone);
                 await _unitOfWork.Users.UpdateAsync(user, updateDefinition);
-                return Ok();
+                return Ok(new {message = $"User {userDto.Name} updated successfully" });
             }
             catch (Exception ex)
             {
@@ -115,7 +115,7 @@ namespace Cross_WebApplication.Controllers
                               .Set(u => u.Role, roleName);
                     await _unitOfWork.Users.UpdateAsync(user, updateDefinition);
 
-                    return Ok($"User {identityUser.UserName} successfully assigned to role {roleName}");
+                    return Ok(new { message = $"User {identityUser.UserName} successfully assigned to role {roleName}" });
                 }
                 return BadRequest("User not found");
 
@@ -137,21 +137,30 @@ namespace Cross_WebApplication.Controllers
                 {
                     ApplicationUser appUser = new ApplicationUser
                     {
-                        UserName = userDto.UserName,
-                        Email = userDto.Email
+                        Email = userDto.Email,
+                        UserName = userDto.Email
                     };
 
                     IdentityResult result = await _userManager.CreateAsync(appUser, AppConstant.DefaultPassword);
                     if (result.Succeeded)
                     {
                         var identityUser = await _userManager.FindByEmailAsync(userDto.Email);
+
+                        var roleExists = await _roleManager.RoleExistsAsync(userDto.Role);
+                        if (!roleExists && AppConstant.RoleList.Contains(userDto.Role))
+                        {
+                            // Create the role if it doesn't exist
+                            var newRole = new ApplicationRole(userDto.Role);
+                            await _roleManager.CreateAsync(newRole);
+                        }
+
                         await _userManager.AddToRoleAsync(identityUser, userDto.Role);
 
                         var user = userDto.CopyToUserEntity();
                         user.Id = identityUser.Id;
 
                         await _unitOfWork.Users.AddAsync(user);
-                        return Ok("User successfully created");
+                        return Ok(new { message = "User successfully created" });
                     }
                     else
                     {
@@ -181,7 +190,7 @@ namespace Cross_WebApplication.Controllers
                 {
                     await _unitOfWork.Users.DeleteAsync(userId);
 
-                    return Ok("User successfully deleted");
+                    return Ok(new { message = "User successfully deleted" });
                 }
                 else
                 {
@@ -193,5 +202,7 @@ namespace Cross_WebApplication.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        
     }
 }

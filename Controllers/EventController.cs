@@ -1,5 +1,6 @@
 ﻿using Cross_WebApplication.Context;
 using Cross_WebApplication.Models;
+using CrossApplication.API.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ namespace Cross_WebApplication.Controllers
 
         [HttpGet]
         [Authorize(Policy = AppConstant.Role.Reader)]
-        public async Task<IActionResult> GetEvents()
+        public async Task<IActionResult> GetEvents([FromQuery] EventRequestDto eventParameters)
         {
             try
             {
-                var events = await _unitOfWork.Events.GetAllAsync();
+                var events = await _unitOfWork.Events.GetAllEventsAsync(eventParameters);
                 return Ok(events);
             }
             catch (Exception ex)

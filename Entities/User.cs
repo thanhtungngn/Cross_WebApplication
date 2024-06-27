@@ -7,8 +7,7 @@ namespace Cross_WebApplication.Entities
         public string Name { get; set; }
 
         public string Surname { get; set; }
-        [Required]
-        public string UserName {  get; set; }
+
         [Required]
         public string Email { get; set; }
 

@@ -10,8 +10,6 @@ namespace Cross_WebApplication.Entities
         [Required]
         public string Surname { get; set; }
 
-        [Required]
-        public string UserName { get; set; }
 
         [Required]
         [EmailAddress(ErrorMessage = "Invalid Email")]

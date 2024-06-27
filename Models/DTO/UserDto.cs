@@ -8,17 +8,20 @@ namespace Cross_WebApplication.Models.DTO
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string UserName { get; set; }
+        
         [Required]
+        [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
+        
         [Required]
+        [Phone(ErrorMessage = "Invalid Phone number")]
         public string Phone { get; set; }
         [Required]
         public string Role { get; set; }
 
         public User CopyToUserEntity()
         {
-            return new User { Id = Id, Name = Name, Surname = Surname, UserName = UserName, Email = Email, Phone = Phone, Role = Role };
+            return new User { Id = Id, Name = Name, Surname = Surname, Email = Email, Phone = Phone, Role = Role };
         }
     }
 }
