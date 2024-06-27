@@ -33,7 +33,7 @@ namespace Cross_WebApplication.Controllers
             }
         }
 
-        [HttpPost("{id}/process")]
+        [HttpPost("process/{id}")]
         [Authorize(Policy = AppConstant.Role.Contributor)]
         public async Task<IActionResult> MarkAsProcessed(string id)
         {
@@ -41,7 +41,7 @@ namespace Cross_WebApplication.Controllers
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await _unitOfWork.Events.MarkAsProcessedAsync(id, userId);
-                return Ok();
+                return Ok(new {message = "Event processed"});
             }
             catch (Exception ex)
             {
