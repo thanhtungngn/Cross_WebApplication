@@ -14,9 +14,21 @@ using Cross_WebApplication.Repository.Abstract;
 using Cross_WebApplication.Repository.Concrete;
 using Cross_WebApplication.Context;
 using Cross_WebApplication.Models;
+using CrossApplication.API.Middleware;
+using Serilog.Events;
+using Serilog;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/myapp-.log", rollingInterval: RollingInterval.Day));
+
+Log.Information("Starting...");
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -160,6 +172,9 @@ builder.Services.AddSwaggerGen(c =>
 
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging(); 
+app.UseMiddleware<ErrorHandlingMiddleware>(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
